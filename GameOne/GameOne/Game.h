@@ -1,4 +1,6 @@
 #pragma once
+#include <iostream>
+
 #include <SFML/Window.hpp>
 #include <SFML/Graphics.hpp>
 
@@ -30,11 +32,17 @@ private:
 	sf::VideoMode videoMode;
 	std::string windowName;
 
+	// Game objects
+	// Usualy we will use textures. For this game tho we use shapes
+	sf::RectangleShape enemy;
+
 	// Private functions
 	// Initializes the variables
 	void initializeVariables();
 	// Initializes the window
 	void initializeWindow();
+	// Initializes the enemues
+	void initializeEnemies();
 	// Poll events. Did something happen?
 	void pollEvents();
 };
