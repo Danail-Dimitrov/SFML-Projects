@@ -5,6 +5,7 @@ Game::Game()
 	this->initializeVariables();
 	this->initializeWindow();
 	this->initializeEnemies();
+	this->initializeRandomEngine();
 }
 
 // Destructors
@@ -14,6 +15,36 @@ Game::~Game()
 }
 
 // Public functions
+void Game::update()
+{
+	this->pollEvents();
+
+	this->updateMousePositions();
+
+	this->updateEnemies();
+}
+
+void Game::render()
+{
+	// Clear old frame
+	// Instead of a color constant I can pass 3 ints for rgb
+	//sf::Color::Blue
+	this->window->clear();
+
+	// Draw new frame
+	this->renderEnemies();
+
+	// Tells the app that the frame is ready to be displayed. (The window is done drawing)
+	this->window->display();
+}
+
+//Accessors
+const bool Game::getWindowIsOpen() const
+{
+	return this->window->isOpen();
+}
+
+// Private functions
 void Game::pollEvents()
 {
 	// Event polling. (Did something happen)
@@ -31,45 +62,79 @@ void Game::pollEvents()
 	}
 }
 
-void Game::update()
+void Game::updateMousePositions()
 {
-	this->pollEvents();
-
-	// Update mouse position relative to the entire screen
-	//auto pos = sf::Mouse::getPosition();
-	//std::cout << "Mouse screen pos: " << pos.x << " " << pos.y << std::endl;
-
 	// Update mouse position relative to the window
-	auto posWindow = sf::Mouse::getPosition(*this->window);
-	std::cout << "Mouse window pos: " << posWindow.x << " " << posWindow.y << std::endl;
+	this->mousePositionWindow = sf::Mouse::getPosition(*this->window);
 }
 
-void Game::render()
+void Game::spawnEnemy()
 {
-	// Clear old frame
-	// Instead of a color constant I can pass 3 ints for rgb
-	//sf::Color::Blue
-	this->window->clear();
+	// Spawns enemies and sets random color and a random position
+	this->enemy.setPosition({
+		static_cast<float>(rand() % static_cast<int>(this->window->getSize().x - this->enemy.getSize().x)),
+		static_cast<float>(rand() % static_cast<int>(this->window->getSize().y - this->enemy.getSize().y)),
+		});
+	
+	this->enemy.setFillColor(sf::Color(rand() % 255 + 1, rand() % 255 + 1, rand() % 255 + 1));
 
-	// Draw new frame
-	this->window->draw(this->enemy);
-
-	// Tells the app that the frame is ready to be displayed. (The window is done drawing)
-	this->window->display();
+	// Spawned the enemy
+	this->enemies.push_back(this->enemy);
 }
 
-//Accessors
-const bool Game::getWindowIsOpen() const
+void Game::updateEnemies()
 {
-	return this->window->isOpen();
+	// Updading the timer for enemy spawning
+	if (this->enemies.size() < this->maxEnemies)
+	{
+		if (this->enemySpawnTimer >= this->enemySpawnTimerMax)
+		{
+			// Spawn and enemy and reset the timer
+			this->spawnEnemy();
+			this->enemySpawnTimer = 0.f;
+		}
+		else
+			this->enemySpawnTimer += 1.f;
+	}
+
+	// Moves enemies downwards
+	// Wraps the enemies at the bottom of the screen back to the top
+	for (auto& e : this->enemies)
+	{
+		e.move({ 0.f, 1.f });
+		// If the enemy is at the bottom of the screen
+		if (e.getPosition().y > this->window->getSize().y)
+		{
+			e.setPosition({ e.getPosition().x, 0.f  });
+		}
+	}
 }
 
-// Private functions
+void Game::renderEnemies()
+{
+	// Draws the enemies
+	for (auto& e : this->enemies)
+	{
+		this->window->draw(e);
+	}
+}
+
+void Game::initializeRandomEngine()
+{
+	std::srand(static_cast<unsigned>(time(NULL)));
+}
+
 void Game::initializeVariables()
 {
 	this->window = nullptr;
 	this->videoMode.size = { 800, 600 }; // 800x600 
 	this->windowName = "GameOne"; // The name of the window
+
+	// Game logic
+	this->points = 0;
+	this->enemySpawnTimerMax = 1000.f;
+	this->enemySpawnTimer = this->enemySpawnTimerMax;
+	this->maxEnemies = 5;
 }
 
 void Game::initializeWindow()
@@ -84,7 +149,9 @@ void Game::initializeWindow()
 
 	// We turn on vertical sync. This means that the game will run at the same speed as the monitor refresh rate.
 	// We should call this function once after creating the window
-	this->window->setVerticalSyncEnabled(true);
+	//this->window->setVerticalSyncEnabled(true);
+
+	this->window->setFramerateLimit(60);
 }
 
 void Game::initializeEnemies()
