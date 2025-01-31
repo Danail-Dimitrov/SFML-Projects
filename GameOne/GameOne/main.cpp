@@ -8,8 +8,8 @@ int main()
 
 	// Game loop
 	// Every game frame has three stages: Evvent polling, Update and Render
-	// While the window is open, the game will run
-	while (game.getWindowIsOpen())
+	// While the window is open and the game is not over, the game will run
+	while (game.getWindowIsOpen() && !game.getGameOver())
 	{
 		// Update
 		game.update();

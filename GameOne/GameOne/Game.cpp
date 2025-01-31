@@ -19,9 +19,12 @@ void Game::update()
 {
 	this->pollEvents();
 
-	this->updateMousePositions();
+	if (!this->gameOver)
+	{
+		this->updateMousePositions();
 
-	this->updateEnemies();
+		this->updateEnemies();
+	}
 }
 
 void Game::render()
@@ -42,6 +45,11 @@ void Game::render()
 const bool Game::getWindowIsOpen() const
 {
 	return this->window->isOpen();
+}
+
+const bool Game::getGameOver() const
+{
+	return this->gameOver;
 }
 
 // Private functions
@@ -136,7 +144,8 @@ void Game::moveEnemies()
 		if (this->enemies[i].getPosition().y > this->window->getSize().y)
 		{
 			this->enemies.erase(this->enemies.begin() + i);
-			this->points -= 1;
+			this->updatePoints(-1);
+			this->updateHealth(-1);
 
 			// We need to do this because we are deleting an element from the vector
 			// If we don't do this we will skip the next element
@@ -165,7 +174,7 @@ void Game::attackEnemies()
 				if (this->enemies[i].getGlobalBounds().contains(this->mousePositionView)) 
 				{
 					this->enemies.erase(this->enemies.begin() + i);
-					this->points += 2;
+					this->updatePoints(2);
 					break;
 				}
 			}
@@ -186,6 +195,23 @@ void Game::renderEnemies()
 	}
 }
 
+void Game::updatePoints(int amount)
+{
+	this->points += amount;
+	std::cout << "Points: " << this->points << std::endl;
+}
+
+void Game::updateHealth(int amount)
+{
+	this->health += amount;
+	std::cout << "Health: " << this->health << std::endl;
+	if (this->health <= 0)
+	{
+		this->gameOver = true;
+		std::cout << "Game Over" << std::endl;
+	}
+}
+
 void Game::initializeRandomEngine()
 {
 	std::srand(static_cast<unsigned>(time(NULL)));
@@ -203,6 +229,8 @@ void Game::initializeVariables()
 	this->enemySpawnTimerMax = 10.f;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
 	this->maxEnemies = 5;
+	this->health = 10;
+	this->gameOver = false;
 }
 
 void Game::initializeWindow()

@@ -28,6 +28,9 @@ public:
 	// Returns if the window is open
 	const bool getWindowIsOpen() const;
 
+	// Returns if the game is over
+	const bool getGameOver() const;
+
 private:
 	// Variables
 	// I want to be able to delete the window when I want. That is why we need the pointer
@@ -45,6 +48,8 @@ private:
 	float enemySpawnTimer;
 	float enemySpawnTimerMax;
 	unsigned int maxEnemies;
+	int health;
+	bool gameOver;
 
 	// Game objects
 	std::vector<sf::RectangleShape> enemies;
@@ -82,5 +87,10 @@ private:
 
 	// Render enemies
 	void renderEnemies();
+
+	// Update points
+	void updatePoints(int amount);
+	// Update health
+	void updateHealth(int amount);
 };
 
