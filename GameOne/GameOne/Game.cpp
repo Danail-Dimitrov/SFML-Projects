@@ -66,6 +66,12 @@ void Game::updateMousePositions()
 {
 	// Update mouse position relative to the window
 	this->mousePositionWindow = sf::Mouse::getPosition(*this->window);
+
+	// Update mouse position relative to the view
+	// This is the position of the mouse in the game world
+	// Both values will be the same. We don't move the view inside the window. 
+	// TODO: Further reaserch on views should be dobe
+	this->mousePositionView = this->window->mapPixelToCoords(this->mousePositionWindow);
 }
 
 void Game::spawnEnemy()
@@ -73,7 +79,7 @@ void Game::spawnEnemy()
 	// Spawns enemies and sets random color and a random position
 	this->enemy.setPosition({
 		static_cast<float>(rand() % static_cast<int>(this->window->getSize().x - this->enemy.getSize().x)),
-		static_cast<float>(rand() % static_cast<int>(this->window->getSize().y - this->enemy.getSize().y)),
+		0.f // So the enemy spawns at the top
 		});
 	
 	this->enemy.setFillColor(sf::Color(rand() % 255 + 1, rand() % 255 + 1, rand() % 255 + 1));
@@ -98,14 +104,54 @@ void Game::updateEnemies()
 	}
 
 	// Moves enemies downwards
-	// Wraps the enemies at the bottom of the screen back to the top
-	for (auto& e : this->enemies)
+	// Delete them if they are at the bottom of the screen
+	// Avoid having multipple for loops for enemies. (This means in other methods as well).
+	// Not only will it slow the code down it can also lead to mistakes 
+	// eg. if you delete an enemy in one and itterate it in the other.
+	// We use a normal loop to make it easier to delete clicked enemies
+	// Here we aren't going to use the best way to delete elements from a collection
+	// In normal case we would create our own collection for the enemies for example.
+	// This custom collection will help prevent for eg. resizing 
+	for (int i = 0; i < this->enemies.size(); i++)
 	{
-		e.move({ 0.f, 1.f });
-		// If the enemy is at the bottom of the screen
-		if (e.getPosition().y > this->window->getSize().y)
+		this->enemies[i].move({ 0.f, 1.f });
+		
+		bool isDeleted = false;
+
+		// Check if we clicked on an enemy
+		// Is the button pressed is the easier to compute operation.
+		// Checking if the mouse is over the enemy is havier.
+		// For this reason we check it only when the mouse is pressed
+		// The other way around is harder to compute
+		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
 		{
-			e.setPosition({ e.getPosition().x, 0.f  });
+			if (this->enemies[i].getGlobalBounds().contains(this->mousePositionView))
+			{
+				this->points += 1;
+				
+				isDeleted = true;
+			}
+		}
+		// We want to make sure we delete enemies only onces.
+		// If the enemy is pass the screen delete it and substract points
+		if (this->enemies[i].getPosition().y > this->window->getSize().y)
+		{
+			isDeleted = true;
+			this->points -= 1;
+		}
+
+		if (isDeleted)
+		{
+			this->enemies.erase(this->enemies.begin() + i);
+			// We need to do this because we are deleting an element from the vector
+			// If we don't do this we will skip the next element
+			// (a b c d) and i points to b. We delete b. Now c is in position i
+			// We increment i and we skip c
+			// We can skip this since the frames refresh very fast and by the time we 
+			// click c we will be in the next frame where the loop will be correct
+			// But this will technically be a bug and if the user is super fast with the mouse or fps drops
+			// it will be a problem
+			i = i - 1;
 		}
 	}
 }
@@ -132,7 +178,7 @@ void Game::initializeVariables()
 
 	// Game logic
 	this->points = 0;
-	this->enemySpawnTimerMax = 1000.f;
+	this->enemySpawnTimerMax = 10.f;
 	this->enemySpawnTimer = this->enemySpawnTimerMax;
 	this->maxEnemies = 5;
 }
@@ -167,5 +213,5 @@ void Game::initializeEnemies()
 	// Sets the thickness of the outline
 	this->enemy.setOutlineThickness(1.f);
 	// Change the scale of the enemy
-	this->enemy.setScale({ 2.f, 2.f });
+	this->enemy.setScale({ 1.f, 1.f }); // Curently stupid call left it for educational purposes
 }

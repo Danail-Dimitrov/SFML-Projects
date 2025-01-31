@@ -36,7 +36,8 @@ private:
 	std::string windowName;
 
 	// Mouse positions
-	sf::Vector2i mousePositionWindow;
+	sf::Vector2i mousePositionWindow; // Two integers
+	sf::Vector2f mousePositionView; // Two floats
 
 	// Game logic
 	int points;
