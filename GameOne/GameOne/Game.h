@@ -38,6 +38,7 @@ private:
 	// Mouse positions
 	sf::Vector2i mousePositionWindow; // Two integers
 	sf::Vector2f mousePositionView; // Two floats
+	bool mouseHeld;
 
 	// Game logic
 	int points;
@@ -51,6 +52,7 @@ private:
 	sf::RectangleShape enemy;
 
 	// Private functions
+	// Initializers
 	// Seeds the random number generator
 	void initializeRandomEngine();
 	// Initializes the variables
@@ -58,15 +60,26 @@ private:
 	// Initializes the window
 	void initializeWindow();
 	// Initializes the enemues
-	void initializeEnemies();
+	void initializeEnemy();
+
 	// Poll events. Did something happen?
 	void pollEvents();
+
 	// Update mouse position
 	void updateMousePositions();
+	
+	// Enemies
 	// Spawns an enemy
 	void spawnEnemy();
 	// Update enemies
 	void updateEnemies();
+	// Updates enemy spawn timer
+	void updateEnemySpawnTimer();
+	// Handles enemy movement
+	void moveEnemies();
+	// Handles player atacking enemies
+	void attackEnemies();
+
 	// Render enemies
 	void renderEnemies();
 };

@@ -4,7 +4,7 @@ Game::Game()
 {
 	this->initializeVariables();
 	this->initializeWindow();
-	this->initializeEnemies();
+	this->initializeEnemy();
 	this->initializeRandomEngine();
 }
 
@@ -90,6 +90,18 @@ void Game::spawnEnemy()
 
 void Game::updateEnemies()
 {
+	// Update the spawn timer
+	this->updateEnemySpawnTimer();
+
+	// Move the enemies and despawn those that are at the bottom of the screen
+	this->moveEnemies();
+
+	// User attacks the enemies
+	this->attackEnemies();
+}
+
+void Game::updateEnemySpawnTimer()
+{
 	// Updading the timer for enemy spawning
 	if (this->enemies.size() < this->maxEnemies)
 	{
@@ -102,7 +114,10 @@ void Game::updateEnemies()
 		else
 			this->enemySpawnTimer += 1.f;
 	}
+}
 
+void Game::moveEnemies()
+{
 	// Moves enemies downwards
 	// Delete them if they are at the bottom of the screen
 	// Avoid having multipple for loops for enemies. (This means in other methods as well).
@@ -112,37 +127,17 @@ void Game::updateEnemies()
 	// Here we aren't going to use the best way to delete elements from a collection
 	// In normal case we would create our own collection for the enemies for example.
 	// This custom collection will help prevent for eg. resizing 
+	// After code refactoring the comments might not be in the correct place.
+	// They are meant as learing notes so their position is not that important for me
 	for (int i = 0; i < this->enemies.size(); i++)
 	{
 		this->enemies[i].move({ 0.f, 1.f });
-		
-		bool isDeleted = false;
 
-		// Check if we clicked on an enemy
-		// Is the button pressed is the easier to compute operation.
-		// Checking if the mouse is over the enemy is havier.
-		// For this reason we check it only when the mouse is pressed
-		// The other way around is harder to compute
-		if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-		{
-			if (this->enemies[i].getGlobalBounds().contains(this->mousePositionView))
-			{
-				this->points += 1;
-				
-				isDeleted = true;
-			}
-		}
-		// We want to make sure we delete enemies only onces.
-		// If the enemy is pass the screen delete it and substract points
 		if (this->enemies[i].getPosition().y > this->window->getSize().y)
 		{
-			isDeleted = true;
-			this->points -= 1;
-		}
-
-		if (isDeleted)
-		{
 			this->enemies.erase(this->enemies.begin() + i);
+			this->points -= 1;
+
 			// We need to do this because we are deleting an element from the vector
 			// If we don't do this we will skip the next element
 			// (a b c d) and i points to b. We delete b. Now c is in position i
@@ -154,6 +149,32 @@ void Game::updateEnemies()
 			i = i - 1;
 		}
 	}
+}
+
+void Game::attackEnemies()
+{
+	// Check if we clicked on an enemy
+	// We do not allow users to hold the mouse button to kill enemies
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+	{
+		if(!this->mouseHeld)
+		{
+			this->mouseHeld = true;
+			for (size_t i = 0; i < this->enemies.size(); i++)
+			{
+				if (this->enemies[i].getGlobalBounds().contains(this->mousePositionView)) 
+				{
+					this->enemies.erase(this->enemies.begin() + i);
+					this->points += 2;
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		this->mouseHeld = false;
+	}	
 }
 
 void Game::renderEnemies()
@@ -175,6 +196,7 @@ void Game::initializeVariables()
 	this->window = nullptr;
 	this->videoMode.size = { 800, 600 }; // 800x600 
 	this->windowName = "GameOne"; // The name of the window
+	this->mouseHeld = false;
 
 	// Game logic
 	this->points = 0;
@@ -200,7 +222,7 @@ void Game::initializeWindow()
 	this->window->setFramerateLimit(60);
 }
 
-void Game::initializeEnemies()
+void Game::initializeEnemy()
 {
 	// Set the position of the rectangle (the coordinates are those of the top left corrner)
 	this->enemy.setPosition({ 10.f, 10.f });
