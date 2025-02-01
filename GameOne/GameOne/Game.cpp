@@ -6,12 +6,15 @@ Game::Game()
 	this->initializeWindow();
 	this->initializeEnemy();
 	this->initializeRandomEngine();
+	this->initializeFonts();
+	this->initializeText();
 }
 
 // Destructors
 Game::~Game()
 {
 	delete this->window;
+	delete this->uiText;
 }
 
 // Public functions
@@ -24,6 +27,8 @@ void Game::update()
 		this->updateMousePositions();
 
 		this->updateEnemies();
+
+		this->updateText();
 	}
 }
 
@@ -35,7 +40,10 @@ void Game::render()
 	this->window->clear();
 
 	// Draw new frame
-	this->renderEnemies();
+	this->renderEnemies(*this->window);
+
+	// Draw UI
+	this->renderText(*this->window);
 
 	// Tells the app that the frame is ready to be displayed. (The window is done drawing)
 	this->window->display();
@@ -186,15 +194,6 @@ void Game::attackEnemies()
 	}	
 }
 
-void Game::renderEnemies()
-{
-	// Draws the enemies
-	for (auto& e : this->enemies)
-	{
-		this->window->draw(e);
-	}
-}
-
 void Game::updatePoints(int amount)
 {
 	this->points += amount;
@@ -264,4 +263,40 @@ void Game::initializeEnemy()
 	this->enemy.setOutlineThickness(1.f);
 	// Change the scale of the enemy
 	this->enemy.setScale({ 1.f, 1.f }); // Curently stupid call left it for educational purposes
+}
+
+void Game::initializeFonts()
+{
+	if (!this->font.openFromFile("Fonts/Dosis-Light.ttf"))
+		std::cout << "ERROR::GAME::INITIALIZEFONTS::Failed to load font" << std::endl;
+}
+
+void Game::initializeText()
+{
+	this->uiText = new sf::Text(this->font);
+	this->uiText->setCharacterSize(24);
+	this->uiText->setFillColor(sf::Color::White);
+	this->uiText->setOutlineColor(sf::Color::Black);
+	this->uiText->setOutlineThickness(1.f);
+	this->uiText->setPosition({ 0.f, 0.f });
+	this->uiText->setString("Points: NO VALUE \n Health: NO VALUE" );
+}
+
+void Game::updateText()
+{
+	this->uiText->setString("Points: " + std::to_string(this->points) + "\n" + "Health: " + std::to_string(this->health));
+}	
+
+void Game::renderEnemies(sf::RenderTarget& target)
+{
+	// Draws the enemies
+	for (auto& e : this->enemies)
+	{
+		target.draw(e);
+	}
+}
+
+void Game::renderText(sf::RenderTarget& target)
+{
+	target.draw(*this->uiText);
 }

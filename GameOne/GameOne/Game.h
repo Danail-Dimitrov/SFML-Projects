@@ -38,6 +38,12 @@ private:
 	sf::VideoMode videoMode;
 	std::string windowName;
 
+	// Resources
+	sf::Font font;
+
+	// Text
+	sf::Text* uiText;
+
 	// Mouse positions
 	sf::Vector2i mousePositionWindow; // Two integers
 	sf::Vector2f mousePositionView; // Two floats
@@ -66,10 +72,15 @@ private:
 	void initializeWindow();
 	// Initializes the enemues
 	void initializeEnemy();
+	// Initializes fonts
+	void initializeFonts();
+	// Initializes text
+	void initializeText();
 
 	// Poll events. Did something happen?
 	void pollEvents();
 
+	// Mouse
 	// Update mouse position
 	void updateMousePositions();
 	
@@ -85,12 +96,22 @@ private:
 	// Handles player atacking enemies
 	void attackEnemies();
 
-	// Render enemies
-	void renderEnemies();
-
+	// User stats
 	// Update points
 	void updatePoints(int amount);
 	// Update health
 	void updateHealth(int amount);
+
+	// Text
+	// Updates the text
+	void updateText();
+
+	// Render enemies
+	void renderEnemies(sf::RenderTarget& target);
+	// Render text
+	// Renders the text in the given target. 
+	// Sometimes I dont want the target to be the window.
+	// I want to render the text in a view for example
+	void renderText(sf::RenderTarget& target);
 };
 
