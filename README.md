@@ -1,0 +1,1 @@
+This is a repository containing my projects created while learning SFML following the tutorial of Suraj Sharma: https://www.youtube.com/@SurajSharmaFourKnob.
