@@ -16,7 +16,7 @@ public:
 	void setScore(const int score);
 	// Functions
 	// I need the target to make the window bounds
-	void update(sf::RenderTarget* target);
+	void update(const sf::RenderTarget* target);
 	void render(sf::RenderTarget* target);
 
 private:
@@ -26,6 +26,7 @@ private:
 
 	// Update functions
 	void updateInput();
+	void updateWindowBounds(const sf::RenderTarget* target);
 
 	// Functions
 	void initVariables();
