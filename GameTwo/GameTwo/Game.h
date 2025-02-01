@@ -1,8 +1,7 @@
 #pragma once
 #include <ctime>
 
-#include <SFML/Graphics.hpp>
-#include <SFML/Window.hpp>
+#include "Player.h"
 
 class Game
 {
@@ -18,12 +17,14 @@ public:
 	// Functions
 	void update();
 	void render();
+	const bool isRunning() const;
 
 private:
 	// Private variables
 	sf::VideoMode videoMode;
 	sf::RenderWindow* window;
 	bool endGame;
+	Player player;
 
 	// Private functions
 	// Initialization functions
@@ -33,4 +34,7 @@ private:
 	void initWindow();
 	// Initializes the random seed
 	void initRandomSeed();
+
+	// Polling function
+	void pollEvents();
 };
