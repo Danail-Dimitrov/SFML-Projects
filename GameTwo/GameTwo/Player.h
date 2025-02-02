@@ -11,6 +11,8 @@ public:
 
 	// Accessors
 	const sf::RectangleShape& getShape() const { return this->shape; }
+	const int& getHp() const { return this->hp; }
+	const int& getHpMax() const { return this->hpMax; }
 
 	// Functions
 	// I need the target to make the window bounds
@@ -23,7 +25,6 @@ private:
 	float movementSpeed;
 	int hp;
 	int hpMax;
-	int points;
 
 	// Update functions
 	void updateInput();

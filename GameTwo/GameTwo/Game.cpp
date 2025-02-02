@@ -6,6 +6,8 @@ Game::Game()
 	this->initVariables();
 	this->initRandomSeed();
 	this->initWindow();
+	this->initFont();
+	this->initText();
 }
 
 Game::~Game()
@@ -23,6 +25,8 @@ void Game::update()
 	this->player.update(this->window);
 
 	this->updateCollision();
+
+	this->updateText();
 }
 
 void Game::render()
@@ -32,6 +36,8 @@ void Game::render()
 	this->player.render(this->window);
 
 	this->renderSwagBalls(*this->window);
+
+	this->renderText(*this->window);
 
 	this->window->display();
 }
@@ -49,6 +55,7 @@ void Game::initVariables()
 	this->spawnTimerMax = 40.f;
 	this->spawnTimer = this->spawnTimerMax;
 	this->maxSwagBalls = 10;
+	this->points = 0;
 }
 
 void Game::initWindow()
@@ -61,6 +68,24 @@ void Game::initWindow()
 void Game::initRandomSeed()
 {
 	srand(static_cast<unsigned>(time(NULL)));
+}
+
+void Game::initFont()
+{
+	if (!this->font.openFromFile("Fonts/Dosis-Light.ttf"))
+		std::cout << "ERROR::GAME::INITIALIZEFONTS::Failed to load font" << std::endl;
+}
+
+void Game::initText()
+{
+	this->uiText = new sf::Text(this->font);
+	this->uiText->setCharacterSize(24);
+	this->uiText->setFillColor(sf::Color::White);
+	this->uiText->setOutlineColor(sf::Color::Black);
+	this->uiText->setOutlineThickness(1.f);
+	this->uiText->setPosition({ 0.f, 0.f });
+	this->uiText->setString("Points: NO VALUE \n Health: NO VALUE");
+
 }
 
 void Game::spawnSwagBalls()
@@ -81,6 +106,11 @@ void Game::renderSwagBalls(sf::RenderTarget& target)
 {
 	for (auto& swagBall : this->swagBalls)
 		swagBall.render(target);
+}
+
+void Game::renderText(sf::RenderTarget& target)
+{
+	target.draw(*this->uiText);
 }
 
 void Game::pollEvents()
@@ -105,6 +135,17 @@ void Game::updateCollision()
 		if (this->player.getShape().getGlobalBounds().findIntersection(this->swagBalls[i].getShape().getGlobalBounds()))
 		{
 			this->swagBalls.erase(this->swagBalls.begin() + i);
+			this->points++;
 		}
 	}
+}
+
+void Game::updateText()
+{
+	std::stringstream ss;
+
+	ss << "Points: " << this->points << "\n"
+		<< "Health: " << this->player.getHp() << " / " << this->player.getHpMax();
+
+	this->uiText->setString(ss.str());
 }
