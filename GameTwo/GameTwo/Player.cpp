@@ -64,7 +64,9 @@ void Player::updateWindowBounds(const sf::RenderTarget* target)
 // Private functions
 void Player::initVariables()
 {
-	this->movementSpeed = 10.f;
+	this->movementSpeed = 5.f;
+	this->hpMax = 10;
+	this->hp = this->hpMax;
 }
 
 void Player::initShape()

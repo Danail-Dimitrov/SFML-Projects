@@ -8,12 +8,10 @@ public:
 	// Constructors and destructors
 	Player(float x = 0.f, float y = 0.f);
 	~Player();
+
 	// Accessors
-	const int& getHealth() const;
-	const int& getScore() const;
-	// Modifiers
-	void setHealth(const int health);
-	void setScore(const int score);
+	const sf::RectangleShape& getShape() const { return this->shape; }
+
 	// Functions
 	// I need the target to make the window bounds
 	void update(const sf::RenderTarget* target);
@@ -23,6 +21,9 @@ private:
 	// Private variables
 	sf::RectangleShape shape;
 	float movementSpeed;
+	int hp;
+	int hpMax;
+	int points;
 
 	// Update functions
 	void updateInput();

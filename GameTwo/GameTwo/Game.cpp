@@ -21,6 +21,8 @@ void Game::update()
 	this->spawnSwagBalls();
 
 	this->player.update(this->window);
+
+	this->updateCollision();
 }
 
 void Game::render()
@@ -44,7 +46,7 @@ void Game::initVariables()
 {
 	this->window = nullptr;
 	this->endGame = false;
-	this->spawnTimerMax = 10.f;
+	this->spawnTimerMax = 40.f;
 	this->spawnTimer = this->spawnTimerMax;
 	this->maxSwagBalls = 10;
 }
@@ -92,6 +94,17 @@ void Game::pollEvents()
 			// Close the window if the pressed key is escape
 			if (keyPressed->scancode == sf::Keyboard::Scancode::Escape) //Scancode refers to the physical location of the key on the keyboard. For example Z in english and Y in German have the same scancode
 				this->window->close();
+		}
+	}
+}
+
+void Game::updateCollision()
+{
+	for (size_t i = 0; i < this->swagBalls.size(); i++)
+	{
+		if (this->player.getShape().getGlobalBounds().findIntersection(this->swagBalls[i].getShape().getGlobalBounds()))
+		{
+			this->swagBalls.erase(this->swagBalls.begin() + i);
 		}
 	}
 }

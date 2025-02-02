@@ -9,6 +9,9 @@ public:
 	SwagBalls(const sf::RenderWindow& window);
 	~SwagBalls();
 
+	// Accessors
+	const sf::CircleShape& getShape() const { return this->shape; }
+
 	void update();
 	void render(sf::RenderTarget& target);
 

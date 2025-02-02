@@ -53,4 +53,7 @@ private:
 
 	// Polling function
 	void pollEvents();
+
+	// Update functions
+	void updateCollision();
 };
