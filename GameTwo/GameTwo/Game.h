@@ -73,4 +73,6 @@ private:
 	// Update functions
 	void updateCollision();
 	void updateText();
+	// If the player goes below 1 hp the game ends
+	void updateGameState();
 };

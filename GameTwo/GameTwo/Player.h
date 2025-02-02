@@ -19,6 +19,10 @@ public:
 	void update(const sf::RenderTarget* target);
 	void render(sf::RenderTarget* target);
 
+	// Health
+	void loseHp(const int value);
+	void gainHp(const int value);
+
 private:
 	// Private variables
 	sf::RectangleShape shape;

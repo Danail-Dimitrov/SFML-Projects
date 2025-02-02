@@ -27,6 +27,20 @@ void Player::render(sf::RenderTarget* target)
 	target->draw(this->shape);
 }
 
+void Player::loseHp(const int value)
+{
+	this->hp -= value;
+	if (this->hp < 0)
+		this->hp = 0;
+}
+
+void Player::gainHp(const int value)
+{
+	this->hp += value;
+	if (this->hp > this->hpMax)
+		this->hp = this->hpMax;
+}
+
 void Player::updateInput()
 {
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Scancode::A))

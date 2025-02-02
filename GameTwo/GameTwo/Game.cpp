@@ -96,7 +96,7 @@ void Game::spawnSwagBalls()
 	{
 		if (static_cast<int>(this->swagBalls.size()) < this->maxSwagBalls)
 		{
-			this->swagBalls.push_back(SwagBalls(*this->window));
+			this->swagBalls.push_back(SwagBalls(*this->window, rand() % SwagBallTypes::NUMOFTYPES));
 			this->spawnTimer = 0.f;
 		}
 	}
@@ -134,8 +134,24 @@ void Game::updateCollision()
 	{
 		if (this->player.getShape().getGlobalBounds().findIntersection(this->swagBalls[i].getShape().getGlobalBounds()))
 		{
-			this->swagBalls.erase(this->swagBalls.begin() + i);
 			this->points++;
+			switch (this->swagBalls[i].getType())
+			{
+			case SwagBallTypes::DEFAULT:
+				break;
+			case SwagBallTypes::DAMAGE:
+				this->player.loseHp(1);
+				break;
+			case SwagBallTypes::HEAL:
+				this->player.gainHp(1);
+				break;
+			default:
+				std::cout << "ERROR::GAME::UPDATECOLLISION::SWAGBALLTYPE::UNKNOWN_TYPE" << std::endl;
+				break;
+			}
+			this->swagBalls.erase(this->swagBalls.begin() + i);
+
+			this->updateGameState();
 		}
 	}
 }
@@ -148,4 +164,10 @@ void Game::updateText()
 		<< "Health: " << this->player.getHp() << " / " << this->player.getHpMax();
 
 	this->uiText->setString(ss.str());
+}
+
+void Game::updateGameState()
+{
+	if (this->player.getHp() < 1)
+		this->endGame = true;
 }
