@@ -3,9 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Window.hpp>
 
-// NUMOFTYPES is the number of types of swag balls. I don't like this appraoch, but it's the best I can do for now.
-// But for now it will do
-enum SwagBallTypes { DEFAULT = 0, DAMAGE = 1, HEAL = 2, NUMOFTYPES };
+enum SwagBallTypes { DEFAULT = 0, DAMAGE = 1, HEAL = 2};
 
 class SwagBalls
 {

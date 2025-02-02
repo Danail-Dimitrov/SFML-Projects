@@ -8,6 +8,7 @@ Game::Game()
 	this->initWindow();
 	this->initFont();
 	this->initText();
+	this->initEndGameText();
 }
 
 Game::~Game()
@@ -20,31 +21,39 @@ void Game::update()
 {
 	this->pollEvents();
 
-	this->spawnSwagBalls();
+	if (!this->isEndGame())
+	{
+		this->spawnSwagBalls();
 
-	this->player.update(this->window);
+		this->player.update(this->window);
 
-	this->updateCollision();
+		this->updateCollision();
 
-	this->updateText();
+		this->updateText();
+	}
 }
 
 void Game::render()
 {
 	this->window->clear();
 		
-	this->player.render(this->window);
+	if (!this->isEndGame())
+	{
+		this->player.render(this->window);
 
-	this->renderSwagBalls(*this->window);
+		this->renderSwagBalls(*this->window);
 
-	this->renderText(*this->window);
-
+		this->renderText(*this->window);
+	}
+	else
+		this->window->draw(*this->endGameText);
+	
 	this->window->display();
 }
 
 const bool Game::isRunning() const
 {
-	return this->window->isOpen() && !this->endGame;
+	return this->window->isOpen();
 }
 
 // Private functions
@@ -88,6 +97,35 @@ void Game::initText()
 
 }
 
+void Game::initEndGameText()
+{
+	this->endGameText = new sf::Text(this->font);
+	this->endGameText->setCharacterSize(60);
+	this->endGameText->setFillColor(sf::Color::Red);
+	this->endGameText->setOutlineColor(sf::Color::Black);
+	this->endGameText->setOutlineThickness(1.f);
+	this->endGameText->setPosition({ 100.f, 250.f });
+	this->endGameText->setString("GAME OVER");
+}
+
+const int Game::randomizeBallType() const
+{
+	int type = SwagBallTypes::DEFAULT;
+	int random = rand() % 100 + 1;
+
+	if (random > 10 && random <= 80)
+		type = SwagBallTypes::DAMAGE;
+	else if (random > 80) 
+		type = SwagBallTypes::HEAL;
+
+	return type;
+}
+
+bool Game::isEndGame() const
+{
+	return this->player.getHp() <= 0;
+}
+
 void Game::spawnSwagBalls()
 {
 	if (this->spawnTimer < this->spawnTimerMax)
@@ -96,7 +134,7 @@ void Game::spawnSwagBalls()
 	{
 		if (static_cast<int>(this->swagBalls.size()) < this->maxSwagBalls)
 		{
-			this->swagBalls.push_back(SwagBalls(*this->window, rand() % SwagBallTypes::NUMOFTYPES));
+			this->swagBalls.push_back(SwagBalls(*this->window, this->randomizeBallType()));
 			this->spawnTimer = 0.f;
 		}
 	}

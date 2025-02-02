@@ -43,6 +43,7 @@ private:
 	// Text
 	sf::Font font;
 	sf::Text* uiText;
+	sf::Text* endGameText;
 
 	// Private functions
 	// Initialization functions
@@ -56,6 +57,13 @@ private:
 	void initFont();
 	// Initializes the text
 	void initText();
+	// Initializes the end game text
+	void initEndGameText();
+	// Randomizes the ball type
+	const int randomizeBallType() const;
+
+	// Game state
+	bool isEndGame() const;
 
 	// Enemies
 	// Spawns enemies
