@@ -1,7 +1,9 @@
 #pragma once
 #include <ctime>
+#include <vector>
 
 #include "Player.h"
+#include "SwagBalls.h"
 
 class Game
 {
@@ -24,7 +26,13 @@ private:
 	sf::VideoMode videoMode;
 	sf::RenderWindow* window;
 	bool endGame;
+
 	Player player;
+
+	std::vector<SwagBalls> swagBalls;
+	float spawnTimerMax;
+	float spawnTimer;
+	int maxSwagBalls;
 
 	// Private functions
 	// Initialization functions
@@ -34,6 +42,14 @@ private:
 	void initWindow();
 	// Initializes the random seed
 	void initRandomSeed();
+
+	// Enemies
+	// Spawns enemies
+	void spawnSwagBalls();
+
+	// Rendering
+	// Renders the enemies
+	void renderSwagBalls(sf::RenderTarget& target);
 
 	// Polling function
 	void pollEvents();

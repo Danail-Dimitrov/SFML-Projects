@@ -18,6 +18,8 @@ void Game::update()
 {
 	this->pollEvents();
 
+	this->spawnSwagBalls();
+
 	this->player.update(this->window);
 }
 
@@ -26,6 +28,8 @@ void Game::render()
 	this->window->clear();
 		
 	this->player.render(this->window);
+
+	this->renderSwagBalls(*this->window);
 
 	this->window->display();
 }
@@ -40,6 +44,9 @@ void Game::initVariables()
 {
 	this->window = nullptr;
 	this->endGame = false;
+	this->spawnTimerMax = 10.f;
+	this->spawnTimer = this->spawnTimerMax;
+	this->maxSwagBalls = 10;
 }
 
 void Game::initWindow()
@@ -52,6 +59,26 @@ void Game::initWindow()
 void Game::initRandomSeed()
 {
 	srand(static_cast<unsigned>(time(NULL)));
+}
+
+void Game::spawnSwagBalls()
+{
+	if (this->spawnTimer < this->spawnTimerMax)
+		this->spawnTimer += 1.f;
+	else
+	{
+		if (static_cast<int>(this->swagBalls.size()) < this->maxSwagBalls)
+		{
+			this->swagBalls.push_back(SwagBalls(*this->window));
+			this->spawnTimer = 0.f;
+		}
+	}
+}
+
+void Game::renderSwagBalls(sf::RenderTarget& target)
+{
+	for (auto& swagBall : this->swagBalls)
+		swagBall.render(target);
 }
 
 void Game::pollEvents()
