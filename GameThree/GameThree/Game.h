@@ -1,7 +1,5 @@
 #pragma once
-
-#include <SFML/System.hpp>
-#include <SFML/Graphics.hpp>
+#include "Player.h"
 
 class Game
 {
@@ -14,9 +12,14 @@ public:
 private:
 	sf::RenderWindow* window;
 
+	Player* player;
+
 	void initWindow();
+	void initPlayer();
 
 	void update();
+	void pollEvents();
+	void updatePlayer();
 
 	void render();
 };
