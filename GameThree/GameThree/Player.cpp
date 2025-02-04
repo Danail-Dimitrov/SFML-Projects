@@ -19,10 +19,13 @@ void Player::initVariables()
 
 void Player::initTexture()
 {
+	//Load a texture from file
 	if (!this->texture.loadFromFile("Textures/ship.png"))
+	{
 		std::cout << "ERROR::PLAYER::INITTEXTURE::Could not load texture file." << "\n";
-	
+	}
 }
+
 
 void Player::initSprite()
 {

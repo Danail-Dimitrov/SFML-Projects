@@ -4,11 +4,19 @@ Game::Game()
 {
 	this->initWindow();
 	this->initPlayer();
+	this->initTextures();
 }
 
 Game::~Game()
 {
 	delete this->window;
+	delete this->player;
+
+	for (auto& i : this->textures)
+		delete i.second;
+
+	for (auto& i : this->bullets)
+		delete i;
 }
 
 void Game::run()
@@ -32,11 +40,20 @@ void Game::initPlayer()
 	this->player = new Player();
 }
 
+void Game::initTextures()
+{
+	this->textures["BULLET"] = new sf::Texture(); 
+	if(!this->textures["BULLET"]->loadFromFile("Textures/bullet.png"))
+		std::cout << "ERROR: BULLET TEXTURE VIOLATION";
+}
+
 void Game::update()
 {
 	this->pollEvents();
 
 	this->player->update();
+	
+	this->updateBullets();
 }
 
 void Game::pollEvents()
@@ -54,11 +71,32 @@ void Game::pollEvents()
 	}
 }
 
+void Game::updateBullets()
+{
+	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+	{
+		this->bullets.push_back(new Bullet(
+		this->textures["BULLET"],
+		this->player->getPosition().x,
+		this->player->getPosition().y,
+		0.f,
+		0.f,
+		0.f
+		));
+	}
+
+	for (auto& i : this->bullets)
+		i->update();
+}
+
 void Game::render()
 {
 	this->window->clear();
 
 	this->player->render(*this->window);
+
+	for (auto& i : this->bullets)
+		i->render(this->window);
 
 	this->window->display();
 }

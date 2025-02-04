@@ -1,8 +1,6 @@
 #pragma once
-#include <iostream>
 
-#include <SFML/System.hpp>
-#include <SFML/Graphics.hpp>
+#include "Bullet.h"
 
 class Player
 {
@@ -11,8 +9,9 @@ public:
 	~Player();
 
 	void update();
-
 	void render(sf::RenderTarget& target);
+
+	const sf::Vector2f getPosition() const { return this->sprite->getPosition(); }
 
 private:
 	sf::Sprite* sprite;
