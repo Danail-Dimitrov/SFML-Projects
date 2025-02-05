@@ -43,15 +43,14 @@ void Game::initPlayer()
 void Game::initTextures()
 {
 	this->textures["BULLET"] = new sf::Texture(); 
-	if(!this->textures["BULLET"]->loadFromFile("Textures/bullet.png"))
-		std::cout << "ERROR: BULLET TEXTURE VIOLATION";
+	
 }
 
 void Game::update()
 {
 	this->pollEvents();
 
-	this->player->update();
+	this->updatePlayer();
 	
 	this->updateBullets();
 }
@@ -73,20 +72,31 @@ void Game::pollEvents()
 
 void Game::updateBullets()
 {
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-	{
-		this->bullets.push_back(new Bullet(
-		this->textures["BULLET"],
-		this->player->getPosition().x,
-		this->player->getPosition().y,
-		0.f,
-		0.f,
-		0.f
-		));
-	}
+	
 
-	for (auto& i : this->bullets)
-		i->update();
+	for (int i = 0; i < this->bullets.size(); i++)
+	{
+		this->bullets[i]->update();
+
+		if (this->bullets[i]->getPosition().y + this->bullets[i]->getBounds().size.y < 0.f)
+		{
+			delete this->bullets[i];
+			this->bullets.erase(this->bullets.begin() + i);
+			i--;
+		}
+
+		std::cout << this->bullets.size() << std::endl;
+	}
+}
+
+void Game::updatePlayer()
+{
+	this->player->update();
+
+	Bullet* bullet = this->player->updateAtack();
+
+	if (bullet != nullptr)
+		this->bullets.push_back(bullet);
 }
 
 void Game::render()

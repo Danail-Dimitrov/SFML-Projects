@@ -24,6 +24,11 @@ const sf::FloatRect Bullet::getBounds() const
 	return this->sprite->getGlobalBounds();
 }
 
+const sf::Vector2f Bullet::getPosition() const
+{
+	return this->sprite->getPosition();
+}
+
 void Bullet::update()
 {
 	this->sprite->move(this->movementSpeed * this->direction);

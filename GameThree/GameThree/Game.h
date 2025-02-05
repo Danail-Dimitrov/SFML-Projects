@@ -27,6 +27,7 @@ private:
 	void update();
 	void pollEvents();
 	void updateBullets();
+	void updatePlayer();
 
 	void render();
 };
