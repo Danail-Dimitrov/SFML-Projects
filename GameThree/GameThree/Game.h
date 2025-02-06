@@ -19,20 +19,24 @@ private:
 
 	Player* player;
 
-	Enemy* enemy;
+	float spawnTimer;
+	float spawnTimerMax;
+	std::vector<Enemy*> enemies;
 
 	std::vector<Bullet*> bullets;
 
 	void initWindow();
 	void initPlayer();
-	void initEnemy();
+	void initEnemies();
 	void initRandomization();
 
 	void update();
 	void pollEvents();
 	void updateBullets();
 	void updatePlayer();
+	void updateEnemies();
 
 	void render();
+	void renderEnemies();
 };
 

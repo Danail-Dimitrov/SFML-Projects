@@ -5,7 +5,7 @@ Game::Game()
 	this->initWindow();
 	this->initPlayer();
 	this->initRandomization();
-	this->initEnemy();
+	this->initEnemies();
 }
 
 Game::~Game()
@@ -16,7 +16,8 @@ Game::~Game()
 	for (auto& i : this->bullets)
 		delete i;
 
-	delete this->enemy;
+	for(auto & i : this->enemies)
+		delete i; 
 }
 
 void Game::run()
@@ -40,9 +41,10 @@ void Game::initPlayer()
 	this->player = new Player();
 }
 
-void Game::initEnemy()
+void Game::initEnemies()
 {
-	this->enemy = new Enemy(100.f, 100.f);
+	this->spawnTimerMax = 500.f;
+	this->spawnTimer = this->spawnTimerMax;
 }
 
 void Game::initRandomization()
@@ -57,6 +59,8 @@ void Game::update()
 	this->updatePlayer();
 	
 	this->updateBullets();
+
+	this->updateEnemies();
 }
 
 void Game::pollEvents()
@@ -101,6 +105,23 @@ void Game::updatePlayer()
 		this->bullets.push_back(bullet);
 }
 
+void Game::updateEnemies()
+{
+	this->spawnTimer += 1.f;
+	if (this->spawnTimer >= this->spawnTimerMax)
+	{
+		float x = rand() % 600;
+		float y = rand() % 400;
+		this->enemies.push_back(new Enemy({ x, y }));
+		this->spawnTimer = 0;
+	}
+
+	for (int i = 0; i < this->enemies.size(); i++)
+	{
+		this->enemies[i]->update();
+	}
+}
+
 void Game::render()
 {
 	this->window->clear();
@@ -110,7 +131,13 @@ void Game::render()
 	for (auto& i : this->bullets)
 		i->render(this->window);
 
-	this->enemy->render(*this->window);
+	this->renderEnemies();
 
 	this->window->display();
+}
+
+void Game::renderEnemies()
+{
+	for (auto* enemy : this->enemies)
+		enemy->render(*this->window);
 }

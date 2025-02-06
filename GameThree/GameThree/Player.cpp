@@ -61,7 +61,7 @@ Bullet* Player::updateAtack()
 
 		return new Bullet(
 			&this->bulletTexture,
-			this->sprite->getPosition().x,
+			this->sprite->getPosition().x + this->sprite->getGlobalBounds().size.x / 3.4f,
 			this->sprite->getPosition().y,
 			0.f,
 			-1.f,
