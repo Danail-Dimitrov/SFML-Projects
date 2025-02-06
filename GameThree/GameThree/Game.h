@@ -1,8 +1,10 @@
 #pragma once
 #include <vector>
 #include <map>
+#include <time.h>
 
 #include "Player.h"
+#include "Enemy.h"
 
 class Game
 {
@@ -17,12 +19,14 @@ private:
 
 	Player* player;
 
-	std::map<std::string, sf::Texture*> textures;
+	Enemy* enemy;
+
 	std::vector<Bullet*> bullets;
 
 	void initWindow();
 	void initPlayer();
-	void initTextures();
+	void initEnemy();
+	void initRandomization();
 
 	void update();
 	void pollEvents();

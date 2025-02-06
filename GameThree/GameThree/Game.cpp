@@ -4,7 +4,8 @@ Game::Game()
 {
 	this->initWindow();
 	this->initPlayer();
-	this->initTextures();
+	this->initRandomization();
+	this->initEnemy();
 }
 
 Game::~Game()
@@ -12,11 +13,10 @@ Game::~Game()
 	delete this->window;
 	delete this->player;
 
-	for (auto& i : this->textures)
-		delete i.second;
-
 	for (auto& i : this->bullets)
 		delete i;
+
+	delete this->enemy;
 }
 
 void Game::run()
@@ -40,10 +40,14 @@ void Game::initPlayer()
 	this->player = new Player();
 }
 
-void Game::initTextures()
+void Game::initEnemy()
 {
-	this->textures["BULLET"] = new sf::Texture(); 
-	
+	this->enemy = new Enemy(100.f, 100.f);
+}
+
+void Game::initRandomization()
+{
+	srand(static_cast<unsigned>(time(NULL)));
 }
 
 void Game::update()
@@ -72,8 +76,6 @@ void Game::pollEvents()
 
 void Game::updateBullets()
 {
-	
-
 	for (int i = 0; i < this->bullets.size(); i++)
 	{
 		this->bullets[i]->update();
@@ -107,6 +109,8 @@ void Game::render()
 
 	for (auto& i : this->bullets)
 		i->render(this->window);
+
+	this->enemy->render(*this->window);
 
 	this->window->display();
 }
