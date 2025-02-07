@@ -11,6 +11,8 @@ public:
 	void update();
 	void render(sf::RenderTarget& target);
 
+	const sf::Vector2f getPosition() const { return this->shape.getGlobalBounds().position; }
+
 private:
 	sf::CircleShape shape;
 	int hp;

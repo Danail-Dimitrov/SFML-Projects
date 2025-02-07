@@ -43,7 +43,7 @@ void Game::initPlayer()
 
 void Game::initEnemies()
 {
-	this->spawnTimerMax = 500.f;
+	this->spawnTimerMax = 200.f;
 	this->spawnTimer = this->spawnTimerMax;
 }
 
@@ -110,15 +110,17 @@ void Game::updateEnemies()
 	this->spawnTimer += 1.f;
 	if (this->spawnTimer >= this->spawnTimerMax)
 	{
-		float x = rand() % 600;
-		float y = rand() % 400;
-		this->enemies.push_back(new Enemy({ x, y }));
+		float x = rand() % this->window->getSize().x - 20.f;
+		this->enemies.push_back(new Enemy({ x, -100.f }));
 		this->spawnTimer = 0;
 	}
 
 	for (int i = 0; i < this->enemies.size(); i++)
 	{
 		this->enemies[i]->update();
+
+		if (this->enemies[i]->getPosition().y > this->window->getSize().y)
+			this->enemies.erase(this->enemies.begin() + i);
 	}
 }
 

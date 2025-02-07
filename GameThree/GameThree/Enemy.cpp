@@ -13,6 +13,7 @@ Enemy::~Enemy()
 
 void Enemy::update()
 {
+	this->shape.move({ 0.f, 1.f});
 }
 
 void Enemy::render(sf::RenderTarget& target)
