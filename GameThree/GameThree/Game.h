@@ -35,6 +35,7 @@ private:
 	void updateBullets();
 	void updatePlayer();
 	void updateEnemies();
+	void updateEnemiesCollision();
 
 	void render();
 	void renderEnemies();

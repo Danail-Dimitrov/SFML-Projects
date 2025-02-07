@@ -117,11 +117,31 @@ void Game::updateEnemies()
 
 	for (int i = 0; i < this->enemies.size(); i++)
 	{
+		bool enemyRemoved = false;
 		this->enemies[i]->update();
 
-		if (this->enemies[i]->getPosition().y > this->window->getSize().y)
+		for (size_t j = 0; j < this->bullets.size(); j++)
+		{
+			if (this->enemies[i]->getBounds().findIntersection(this->bullets[j]->getBounds()))
+			{
+				this->bullets.erase(this->bullets.begin() + j);
+				this->enemies.erase(this->enemies.begin() + i);
+				i -= 1.f;
+				enemyRemoved = true;
+				break;
+			}
+		}
+
+		if (!enemyRemoved && this->enemies[i]->getPosition().y > this->window->getSize().y)
+		{
 			this->enemies.erase(this->enemies.begin() + i);
+			i -= 1.f;
+		}
 	}
+}
+
+void Game::updateEnemiesCollision()
+{
 }
 
 void Game::render()

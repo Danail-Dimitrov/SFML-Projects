@@ -13,6 +13,8 @@ public:
 
 	const sf::Vector2f getPosition() const { return this->shape.getGlobalBounds().position; }
 
+	const sf::FloatRect getBounds() const { return this->shape.getGlobalBounds(); }
+
 private:
 	sf::CircleShape shape;
 	int hp;
