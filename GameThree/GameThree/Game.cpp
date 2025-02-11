@@ -6,12 +6,14 @@ Game::Game()
 	this->initPlayer();
 	this->initRandomization();
 	this->initEnemies();
+	this->initText();
 }
 
 Game::~Game()
 {
 	delete this->window;
 	delete this->player;
+	delete this->pointsText;
 
 	for (auto& i : this->bullets)
 		delete i;
@@ -38,6 +40,7 @@ void Game::initWindow()
 
 void Game::initPlayer()
 {
+	this->points = 0;
 	this->player = new Player();
 }
 
@@ -45,6 +48,20 @@ void Game::initEnemies()
 {
 	this->spawnTimerMax = 200.f;
 	this->spawnTimer = this->spawnTimerMax;
+}
+
+void Game::initText()
+{
+	if (!this->font.openFromFile("Fonts/Dosis-Light.ttf"))
+		std::cout << "ERROR::GAME::INITIALIZEFONTS::Failed to load font" << std::endl;
+
+	this->pointsText = new sf::Text(this->font);
+	this->pointsText->setCharacterSize(24);
+	this->pointsText->setFillColor(sf::Color::White);
+	this->pointsText->setOutlineColor(sf::Color::Black);
+	this->pointsText->setOutlineThickness(1.f);
+	this->pointsText->setPosition({ 0.f, 0.f });
+	this->pointsText->setString("Points: NO VALUE \n Health: NO VALUE");
 }
 
 void Game::initRandomization()
@@ -61,6 +78,8 @@ void Game::update()
 	this->updateBullets();
 
 	this->updateEnemies();
+
+	this->updateText();
 }
 
 void Game::pollEvents()
@@ -93,6 +112,15 @@ void Game::updateBullets()
 
 		std::cout << this->bullets.size() << std::endl;
 	}
+}
+
+void Game::updateText()
+{
+	std::stringstream ss;
+
+	ss << "Points: " << this->points << "\n";
+
+	this->pointsText->setString(ss.str());
 }
 
 void Game::updatePlayer()
@@ -128,6 +156,7 @@ void Game::updateEnemies()
 				this->enemies.erase(this->enemies.begin() + i);
 				i -= 1.f;
 				enemyRemoved = true;
+				this->points += 1;
 				break;
 			}
 		}
@@ -155,6 +184,8 @@ void Game::render()
 
 	this->renderEnemies();
 
+	this->renderText();
+
 	this->window->display();
 }
 
@@ -162,4 +193,9 @@ void Game::renderEnemies()
 {
 	for (auto* enemy : this->enemies)
 		enemy->render(*this->window);
+}
+
+void Game::renderText()
+{
+	this->window->draw(*this->pointsText);
 }

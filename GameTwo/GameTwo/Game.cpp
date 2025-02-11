@@ -14,6 +14,8 @@ Game::Game()
 Game::~Game()
 {
 	delete this->window;
+	delete this->uiText;
+	delete this->endGameText;
 }
 
 // Functions
