@@ -16,6 +16,9 @@ public:
 	void run();
 
 private:
+	sf::Sprite* background;
+	sf::Texture backgroundTexture;
+
 	sf::RenderWindow* window;
 
 	Player* player;
@@ -35,6 +38,7 @@ private:
 	void initEnemies();
 	void initText();
 	void initRandomization();
+	void initBackground();
 
 	void update();
 	void pollEvents();
@@ -47,5 +51,6 @@ private:
 	void render();
 	void renderEnemies();
 	void renderText();
+	void renderBackground();
 };
 

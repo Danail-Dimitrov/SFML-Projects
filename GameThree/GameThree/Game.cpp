@@ -7,6 +7,7 @@ Game::Game()
 	this->initRandomization();
 	this->initEnemies();
 	this->initText();
+	this->initBackground();
 }
 
 Game::~Game()
@@ -14,6 +15,7 @@ Game::~Game()
 	delete this->window;
 	delete this->player;
 	delete this->pointsText;
+	delete this->background;
 
 	for (auto& i : this->bullets)
 		delete i;
@@ -67,6 +69,14 @@ void Game::initText()
 void Game::initRandomization()
 {
 	srand(static_cast<unsigned>(time(NULL)));
+}
+
+void Game::initBackground()
+{
+	if (!this->backgroundTexture.loadFromFile("Textures/backGround.jpg"))
+		std::cout << "ERROR::PLAYER::INITTEXTURE::Could not load texture file." << "\n";
+
+	this->background = new sf::Sprite(this->backgroundTexture);
 }
 
 void Game::update()
@@ -177,6 +187,8 @@ void Game::render()
 {
 	this->window->clear();
 
+	this->renderBackground();
+
 	this->player->render(*this->window);
 
 	for (auto& i : this->bullets)
@@ -198,4 +210,9 @@ void Game::renderEnemies()
 void Game::renderText()
 {
 	this->window->draw(*this->pointsText);
+}
+
+void Game::renderBackground()
+{
+	this->window->draw(*this->background);
 }
